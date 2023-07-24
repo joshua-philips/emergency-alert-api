@@ -23,6 +23,10 @@ public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
 
+    private String[] anyMatchers = { "/auth/**", "/api-docs", "/swagger-ui/**",
+            "/v3/api-docs/**", "/bus/v3/api-docs/**" };
+    private String[] adminMatchers = { "/users/**" };
+
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -46,10 +50,9 @@ public class SecurityConfiguration {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(c -> c.disable())
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/auth/**", "/api-docs", "/swagger-ui/**",
-                            "/v3/api-docs/**", "/bus/v3/api-docs/**")
+                    auth.requestMatchers(anyMatchers)
                             .permitAll();
-                    auth.requestMatchers("/users/**").hasAuthority("ADMIN");
+                    auth.requestMatchers(adminMatchers).hasAuthority("ADMIN");
                     auth.anyRequest().authenticated();
                 }).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider(userDetailsService))
