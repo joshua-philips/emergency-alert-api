@@ -19,6 +19,8 @@ public class UserUpdateRequest {
     @Nullable
     private String password;
     @Nullable
+    private String confirm_password;
+    @Nullable
     private String first_name;
     @Nullable
     private String last_name;

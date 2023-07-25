@@ -1,23 +1,16 @@
 package com.jphilips.springemergencyapi.dto;
 
-import java.lang.reflect.Field;
-
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class DefaultResponse<T> {
+@AllArgsConstructor
+@Builder
+public class DefaultResponse {
     private String message;
-    private T body;
+    private Object body;
 
-    public DefaultResponse(String message, String bodyName, T value) {
-        try {
-            Field field = DefaultResponse.class.getDeclaredField(bodyName);
-            field.setAccessible(true);
-            field.set(this, value);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
 }
