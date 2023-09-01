@@ -8,10 +8,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.jphilips.springemergencyapi.models.ApplicationUser;
 import com.jphilips.springemergencyapi.models.Role;
-import com.jphilips.springemergencyapi.repositories.ApplicationUserRepository;
+import com.jphilips.springemergencyapi.models.user.StaffUser;
 import com.jphilips.springemergencyapi.repositories.RoleRepository;
+import com.jphilips.springemergencyapi.repositories.StaffUserRepository;
 
 @SpringBootApplication
 public class SpringEmergencyApiApplication {
@@ -21,15 +21,16 @@ public class SpringEmergencyApiApplication {
 	}
 
 	@Bean
-	CommandLineRunner run(RoleRepository roleRepository, ApplicationUserRepository userRepository,
+	CommandLineRunner run(RoleRepository roleRepository, StaffUserRepository userRepository,
 			PasswordEncoder passwordEncoder) {
 		return args -> {
 			Role adminRole;
 			if (!roleRepository.existsById(1L) || !roleRepository.existsById(2L)) {
-				adminRole = roleRepository.save(new Role(0L, "ADMIN"));
-				roleRepository.save(new Role(0L, "USER"));
+				adminRole = roleRepository.save(new Role(0L, "Administrator"));
+				roleRepository.save(new Role(0L, "User"));
+				roleRepository.save(new Role(0L, "Staff"));
 
-				userRepository.save(ApplicationUser.builder()
+				userRepository.save(StaffUser.builder()
 						.roles(Set.of(adminRole))
 						.username("philipsjoshua96@gmail.com")
 						.first_name("Joshua")

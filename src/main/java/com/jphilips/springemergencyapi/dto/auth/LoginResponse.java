@@ -1,6 +1,6 @@
 package com.jphilips.springemergencyapi.dto.auth;
 
-import com.jphilips.springemergencyapi.models.ApplicationUser;
+import com.jphilips.springemergencyapi.models.user.ApplicationUser;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

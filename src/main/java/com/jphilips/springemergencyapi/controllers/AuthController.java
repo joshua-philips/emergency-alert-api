@@ -14,7 +14,7 @@ import com.jphilips.springemergencyapi.dto.auth.RegisterResponse;
 import com.jphilips.springemergencyapi.dto.users.UserResponse;
 import com.jphilips.springemergencyapi.dto.users.UserUpdateRequest;
 import com.jphilips.springemergencyapi.services.ApplicationUserService;
-import com.jphilips.springemergencyapi.services.AuthService;
+import com.jphilips.springemergencyapi.services.user.ApplicationUserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthController {
-    private final AuthService authService;
+    private final ApplicationUserService authService;
     private final ApplicationUserService userService;
 
     @PostMapping("/register")

@@ -30,6 +30,8 @@ public class Alert {
     private LocalDateTime date_created;
     private LocalDateTime date_updated;
 
+    private boolean viewed;
+
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private Status status;
 }

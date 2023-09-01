@@ -11,6 +11,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class DefaultResponse {
     private String message;
-    private Object body;
-
+    private Object data;
 }

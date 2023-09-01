@@ -25,7 +25,7 @@ public class SecurityConfiguration {
 
     private String[] anyMatchers = { "/auth/**", "/api-docs", "/swagger-ui/**",
             "/v3/api-docs/**", "/bus/v3/api-docs/**" };
-    private String[] adminMatchers = { "/users/**" };
+    private String[] staffMatchers = { "/staff/**" };
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -52,7 +52,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers(anyMatchers)
                             .permitAll();
-                    auth.requestMatchers(adminMatchers).hasAuthority("ADMIN");
+                    auth.requestMatchers(staffMatchers).hasAnyAuthority("Administrator", "Staff");
+                    auth.requestMatchers(staffMatchers).hasAuthority("Administrator");
                     auth.anyRequest().authenticated();
                 }).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider(userDetailsService))

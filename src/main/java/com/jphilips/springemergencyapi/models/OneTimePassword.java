@@ -19,8 +19,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PasswordResetToken {
-    private static final int EXPIRATION = 60;
+public class OneTimePassword {
+    private static final int EXPIRATION = 30;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -32,12 +32,12 @@ public class PasswordResetToken {
     private ApplicationUser user;
     private LocalDateTime expiryDate;
 
-    public PasswordResetToken(String token) {
+    public OneTimePassword(String token) {
         this.token = token;
         this.expiryDate = calculateExpiryDate(EXPIRATION);
     }
 
-    public PasswordResetToken(String token, ApplicationUser user) {
+    public OneTimePassword(String token, ApplicationUser user) {
         this.token = token;
         this.user = user;
         this.expiryDate = calculateExpiryDate(EXPIRATION);
@@ -51,3 +51,13 @@ public class PasswordResetToken {
         return LocalDateTime.now().plusMinutes(expiryTimeInMinutes);
     }
 }
+
+// public static String generateOTP(int length) {
+// String numbers = "0123456789";
+// Random rndm_method = new Random();
+// char[] otp = new char[length];
+// for (int i = 0; i < length; i++) {
+// otp[i] = numbers.charAt(rndm_method.nextInt(numbers.length()));
+// }
+// return new String(otp);
+// }
