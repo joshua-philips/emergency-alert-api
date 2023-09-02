@@ -24,47 +24,48 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
-    private final HttpServletRequest servletRequest;
-    private final ApplicationUserRepository applicationUserRepository;
-    private final StaffUserRepository staffUserRepository;
+        private final HttpServletRequest servletRequest;
+        private final ApplicationUserRepository applicationUserRepository;
+        private final StaffUserRepository staffUserRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        if (isStaffRequest(servletRequest.getRequestURI())) {
-            StaffUser user = staffUserRepository.findByUsername(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+        @Override
+        public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+                if (isStaffRequest(servletRequest.getRequestURI())) {
+                        StaffUser user = staffUserRepository.findByUsername(username)
+                                        .orElseThrow(() -> new UsernameNotFoundException(
+                                                        "User not found: " + username));
 
-            List<GrantedAuthority> authorities = user.getRoles().stream()
-                    .map(Role::getAuthority)
-                    .map(SimpleGrantedAuthority::new)
-                    .collect(Collectors.toList());
+                        List<GrantedAuthority> authorities = user.getRoles().stream()
+                                        .map(Role::getAuthority)
+                                        .map(SimpleGrantedAuthority::new)
+                                        .collect(Collectors.toList());
 
-            return new User(
-                    user.getUsername(),
-                    user.getPassword(),
-                    authorities);
+                        return new User(
+                                        user.getUsername(),
+                                        user.getPassword(),
+                                        authorities);
+                }
+
+                ApplicationUser user = applicationUserRepository.findByUsername(username)
+                                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+
+                List<GrantedAuthority> authorities = user.getRoles().stream()
+                                .map(Role::getAuthority)
+                                .map(SimpleGrantedAuthority::new)
+                                .collect(Collectors.toList());
+
+                return new User(
+                                user.getUsername(),
+                                user.getPassword(),
+                                authorities);
+
         }
 
-        ApplicationUser user = applicationUserRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
-
-        List<GrantedAuthority> authorities = user.getRoles().stream()
-                .map(Role::getAuthority)
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
-
-        return new User(
-                user.getUsername(),
-                user.getPassword(),
-                authorities);
-
-    }
-
-    private boolean isStaffRequest(String requestUri) {
-        if (requestUri.startsWith("/staff")) {
-            return true;
+        public boolean isStaffRequest(String requestUri) {
+                if (requestUri.startsWith("/staff")) {
+                        return true;
+                }
+                return false;
         }
-        return false;
-    }
 
 }

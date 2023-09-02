@@ -3,6 +3,7 @@ package com.jphilips.springemergencyapi.models;
 import java.time.LocalDateTime;
 
 import com.jphilips.springemergencyapi.models.user.ApplicationUser;
+import com.jphilips.springemergencyapi.models.user.StaffUser;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,6 +31,10 @@ public class PasswordResetToken {
 
     @OneToOne
     private ApplicationUser user;
+
+    @OneToOne
+    private StaffUser staffUser;
+
     private LocalDateTime expiryDate;
 
     public PasswordResetToken(String token) {
@@ -40,6 +45,12 @@ public class PasswordResetToken {
     public PasswordResetToken(String token, ApplicationUser user) {
         this.token = token;
         this.user = user;
+        this.expiryDate = calculateExpiryDate(EXPIRATION);
+    }
+
+    public PasswordResetToken(String token, StaffUser staffUser) {
+        this.token = token;
+        this.staffUser = staffUser;
         this.expiryDate = calculateExpiryDate(EXPIRATION);
     }
 

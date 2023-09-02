@@ -23,9 +23,11 @@ public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
 
-    private String[] anyMatchers = { "/auth/**", "/api-docs", "/swagger-ui/**",
+    private String[] anyMatchers = { "/user/**", "/api-docs", "/swagger-ui/**",
             "/v3/api-docs/**", "/bus/v3/api-docs/**" };
     private String[] staffMatchers = { "/staff/**" };
+    private String[] adminMatchers = {};
+    private String[] userMatchers = { "/alerts/add" };
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -52,8 +54,9 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers(anyMatchers)
                             .permitAll();
+                    auth.requestMatchers(userMatchers).hasAnyAuthority("User");
                     auth.requestMatchers(staffMatchers).hasAnyAuthority("Administrator", "Staff");
-                    auth.requestMatchers(staffMatchers).hasAuthority("Administrator");
+                    auth.requestMatchers(adminMatchers).hasAuthority("Administrator");
                     auth.anyRequest().authenticated();
                 }).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider(userDetailsService))

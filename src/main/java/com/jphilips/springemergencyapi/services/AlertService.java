@@ -1,12 +1,12 @@
 package com.jphilips.springemergencyapi.services;
 
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.jphilips.springemergencyapi.dto.alert.AlertRequest;
-import com.jphilips.springemergencyapi.dto.alert.AlertResponse;
 import com.jphilips.springemergencyapi.models.Alert;
 import com.jphilips.springemergencyapi.repositories.AlertRepository;
 
@@ -22,32 +22,27 @@ public class AlertService {
         return alertRepository.findAll();
     }
 
-    public AlertResponse getAlert(Long id) {
+    public Alert getAlert(Long id) {
         Optional<Alert> alert = alertRepository.findById(id);
         if (alert.isPresent()) {
-            return new AlertResponse("Alert loaded successfuly", alert.get());
+            return alert.get();
         }
-
-        return new AlertResponse("Alert not found", null);
+        throw new NoSuchElementException("Alert not found");
     }
 
-    public AlertResponse addAlert(AlertRequest request) {
-        try {
-            Alert alert = Alert.builder()
-                    .username(request.getUsername())
-                    .status(statusService.getStatusById(request.getStatus_id()))
-                    .longitude(request.getLongitude())
-                    .latutide(request.getLatutide())
-                    .town(request.getTown())
-                    .date_created(LocalDateTime.now())
-                    .date_updated(LocalDateTime.now())
-                    .build();
+    public Alert addAlert(AlertRequest request) {
+        Alert alert = Alert.builder()
+                .username(request.getUsername())
+                .status(statusService.getStatusById(request.getStatus_id()))
+                .longitude(request.getLongitude())
+                .latutide(request.getLatutide())
+                .town(request.getTown())
+                .date_created(LocalDateTime.now())
+                .date_updated(LocalDateTime.now())
+                .build();
 
-            Alert savedAlert = alertRepository.save(alert);
-            return new AlertResponse("Alert created successfuly", savedAlert);
-        } catch (Exception e) {
-            return new AlertResponse(e.getMessage(), null);
-        }
+        Alert savedAlert = alertRepository.save(alert);
+        return savedAlert;
 
     }
 

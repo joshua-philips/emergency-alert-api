@@ -4,8 +4,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
-import com.jphilips.springemergencyapi.models.user.ApplicationUser;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -15,11 +13,22 @@ public class MailService {
     // private final JavaMailSender mailSender;
 
     public SimpleMailMessage constructResetTokenEmail(
-            String baseUrl, String token, ApplicationUser user) {
+            String baseUrl, String token, String emailAddress) {
         String url = baseUrl + "/auth/change-password/" + token;
         String message = "Click the link to reset your password";
 
-        SimpleMailMessage mail = constructEmail("Reset Password", message + " \r\n" + url, user);
+        SimpleMailMessage mail = constructEmail("Reset Password", message + " \r\n" + url, emailAddress);
+
+        // mailSender.send(mail);
+        System.out.println(mail);
+        return mail;
+    }
+
+    public SimpleMailMessage registeredStaffEmail(
+            String password, String email) {
+        String message = String.format("%s/n%S", email, password);
+
+        SimpleMailMessage mail = constructEmail("Staff registered successfully", message, email);
 
         // mailSender.send(mail);
         System.out.println(mail);
@@ -27,11 +36,11 @@ public class MailService {
     }
 
     private SimpleMailMessage constructEmail(String subject, String body,
-            ApplicationUser user) {
+            String emailAddress) {
         SimpleMailMessage email = new SimpleMailMessage();
         email.setSubject(subject);
         email.setText(body);
-        email.setTo(user.getUsername());
+        email.setTo(emailAddress);
         email.setFrom(env.getProperty("support.email"));
         return email;
     }

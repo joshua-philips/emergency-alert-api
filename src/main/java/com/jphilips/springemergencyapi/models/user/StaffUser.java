@@ -31,7 +31,7 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties({ "accountNonExpired", "accountNonLocked", "credentialsNonExpired", "enabled", "authorities" })
 public class StaffUser implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long user_id;
 
     @Column(unique = true)

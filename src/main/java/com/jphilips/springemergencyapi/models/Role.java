@@ -2,6 +2,7 @@ package com.jphilips.springemergencyapi.models;
 
 import org.springframework.security.core.GrantedAuthority;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,6 +21,7 @@ public class Role implements GrantedAuthority {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long role_id;
 
+    @Column(unique = true)
     private String authority;
 
     @Override
