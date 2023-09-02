@@ -1,6 +1,7 @@
 package com.jphilips.springemergencyapi.services;
 
 import java.security.Key;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,7 +63,9 @@ public class JwtService {
     }
 
     public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("Authorities", userDetails.getAuthorities());
+        return generateToken(claims, userDetails);
     }
 
     private boolean isTokenExpired(String token) {
@@ -70,8 +73,26 @@ public class JwtService {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
+        boolean roleIsValid = false;
+
+        @SuppressWarnings("unchecked")
+        Function<Claims, ArrayList<Map<String, Object>>> extractAuthorities = claims -> claims.get("Authorities",
+                ArrayList.class);
+        ArrayList<Map<String, Object>> roles = extractClaim(token, extractAuthorities);
+
+        // TODO: Add better logic to prevent error by comparing full List ofauthorities
+        // from token and full List of authorities from userdetails
+        for (Map<String, Object> role : roles) {
+            Object authority = role.get("authority");
+            if (authority != null && authority
+                    .equals(userDetails.getAuthorities().iterator().next().getAuthority())) {
+                roleIsValid = true;
+                break;
+            }
+        }
+
         final String username = extractUsername(token);
-        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+        return username.equals(userDetails.getUsername()) && !isTokenExpired(token) && roleIsValid;
     }
 
 }
