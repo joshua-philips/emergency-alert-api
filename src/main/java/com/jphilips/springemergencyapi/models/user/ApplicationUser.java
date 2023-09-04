@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.jphilips.springemergencyapi.models.Role;
 
 import jakarta.persistence.Column;
@@ -54,6 +55,7 @@ public class ApplicationUser implements UserDetails {
     private Set<Role> roles;
 
     @Transient
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String token;
 
     @Override

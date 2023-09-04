@@ -1,7 +1,6 @@
 package com.jphilips.springemergencyapi.services.user;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -107,10 +106,9 @@ public class ApplicationUserService {
         ApplicationUser user = userRepository.findByUsername(username).get();
 
         String token = createPasswordResetToken(username, user);
-        SimpleMailMessage message = mailService.constructResetTokenEmail(baseUrl, token, user.getUsername());
-        System.out.printf("%s\n%s\n%s\n%s\n",
-                message.getSubject(), Arrays.toString(message.getTo()), message.getFrom(),
-                message.getText());
+        SimpleMailMessage message = mailService
+                .constructResetTokenEmail(baseUrl, token, user.getUsername(), true);
+        System.out.println(message);
 
         return "Password reset request successful. Mail sent to email " + username;
 
@@ -121,7 +119,6 @@ public class ApplicationUserService {
         PasswordResetToken resetToken = new PasswordResetToken(token, user);
         resetTokenRepository.save(resetToken);
         return token;
-
     }
 
     public ApplicationUser changePasswordWithToken(String token, String password) throws Exception {
@@ -142,6 +139,4 @@ public class ApplicationUserService {
         return user;
 
     }
-
-    // TODO: One time passwords
 }

@@ -1,7 +1,6 @@
 package com.jphilips.springemergencyapi.services.user;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -58,7 +57,7 @@ public class StaffUserService {
                 .build();
 
         staffRepository.save(user);
-        mailService.registeredStaffEmail(password, user.getUsername());
+        System.out.println(mailService.registeredStaffEmail(password, user.getUsername()));
         return user;
     }
 
@@ -104,10 +103,8 @@ public class StaffUserService {
         StaffUser user = staffRepository.findByUsername(username).get();
 
         String token = createPasswordResetToken(username, user);
-        SimpleMailMessage message = mailService.constructResetTokenEmail(baseUrl, token, user.getUsername());
-        System.out.printf("%s\n%s\n%s\n%s\n",
-                message.getSubject(), Arrays.toString(message.getTo()), message.getFrom(),
-                message.getText());
+        SimpleMailMessage message = mailService.constructResetTokenEmail(baseUrl, token, user.getUsername(), true);
+        System.out.println(message);
 
         return "Password reset request successful. Mail sent to email " + username;
 

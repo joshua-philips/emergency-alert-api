@@ -13,25 +13,23 @@ public class MailService {
     // private final JavaMailSender mailSender;
 
     public SimpleMailMessage constructResetTokenEmail(
-            String baseUrl, String token, String emailAddress) {
-        String url = baseUrl + "/auth/change-password/" + token;
+            String baseUrl, String token, String emailAddress, boolean isStaff) {
+        String url = baseUrl + (isStaff ? "/staff" : "/user") + "/change-password/" + token;
         String message = "Click the link to reset your password";
 
         SimpleMailMessage mail = constructEmail("Reset Password", message + " \r\n" + url, emailAddress);
 
         // mailSender.send(mail);
-        System.out.println(mail);
         return mail;
     }
 
     public SimpleMailMessage registeredStaffEmail(
             String password, String email) {
-        String message = String.format("%s/n%S", email, password);
+        String message = String.format("%s\n%s", email, password);
 
         SimpleMailMessage mail = constructEmail("Staff registered successfully", message, email);
 
         // mailSender.send(mail);
-        System.out.println(mail);
         return mail;
     }
 
