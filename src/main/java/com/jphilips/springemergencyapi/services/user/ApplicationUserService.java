@@ -37,6 +37,7 @@ public class ApplicationUserService {
     private final AuthenticationManager authenticationManager;
     private final PasswordResetTokenRepository resetTokenRepository;
     private final MailService mailService;
+    private final OtpService otpService;
 
     /** User registration [non-staff] */
     public ApplicationUser registerUser(RegisterRequest request) {
@@ -56,8 +57,10 @@ public class ApplicationUserService {
                 .build();
 
         userRepository.save(user);
-        String token = jwtService.generateToken(user);
-        user.setToken(token);
+
+        SimpleMailMessage otpMessage = mailService.sendMessage(user.getUsername(), "One time password",
+                otpService.createOtp(user));
+        System.out.println(otpMessage);
 
         return user;
     }
@@ -105,20 +108,13 @@ public class ApplicationUserService {
 
         ApplicationUser user = userRepository.findByUsername(username).get();
 
-        String token = createPasswordResetToken(username, user);
+        String token = createPasswordResetToken(user);
         SimpleMailMessage message = mailService
                 .constructResetTokenEmail(baseUrl, token, user.getUsername(), true);
         System.out.println(message);
 
         return "Password reset request successful. Mail sent to email " + username;
 
-    }
-
-    private String createPasswordResetToken(String username, ApplicationUser user) {
-        String token = UUID.randomUUID().toString();
-        PasswordResetToken resetToken = new PasswordResetToken(token, user);
-        resetTokenRepository.save(resetToken);
-        return token;
     }
 
     public ApplicationUser changePasswordWithToken(String token, String password) throws Exception {
@@ -137,6 +133,35 @@ public class ApplicationUserService {
         passwordResetToken.setExpiryDate(LocalDateTime.now());
         resetTokenRepository.delete(passwordResetToken);
         return user;
+    }
+
+    private String createPasswordResetToken(ApplicationUser user) {
+        String token = UUID.randomUUID().toString();
+        PasswordResetToken resetToken = new PasswordResetToken(token, user);
+        resetTokenRepository.save(resetToken);
+        return token;
+    }
+
+    public ApplicationUser verifyOtp(String username, String code) throws Exception {
+        ApplicationUser user = otpService.verifyApplicationOtp(code);
+
+        if (!user.getUsername().equalsIgnoreCase(username)) {
+            throw new Exception("Invalid code for " + username);
+        }
+
+        String token = jwtService.generateToken(user);
+        user.setToken(token);
+        return user;
+    }
+
+    public String resendOtp(String username) {
+        ApplicationUser user = userRepository.findByUsername(username).get();
+        SimpleMailMessage otpMessage = mailService.sendMessage(user.getUsername(), "One time password",
+                otpService.createOtp(user));
+        System.out.println(otpMessage);
+
+        return "One Time Password sent to: " + user.getUsername();
 
     }
+
 }

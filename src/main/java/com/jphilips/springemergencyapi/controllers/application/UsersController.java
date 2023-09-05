@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jphilips.springemergencyapi.dto.DefaultResponse;
 import com.jphilips.springemergencyapi.dto.auth.LoginRequest;
 import com.jphilips.springemergencyapi.dto.auth.RegisterRequest;
+import com.jphilips.springemergencyapi.dto.auth.TokenRequest;
 import com.jphilips.springemergencyapi.dto.users.UserUpdateRequest;
+import com.jphilips.springemergencyapi.models.user.ApplicationUser;
 import com.jphilips.springemergencyapi.services.user.ApplicationUserService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +26,20 @@ public class UsersController {
 
     @PostMapping("/register")
     public DefaultResponse register(@RequestBody RegisterRequest body) {
-        return new DefaultResponse("Successfuly registered", userService.registerUser(body));
+        ApplicationUser user = userService.registerUser(body);
+        return new DefaultResponse("Successfuly registered. Verification sent to "
+                + user.getUsername(), user);
+    }
+
+    @PostMapping("/otp-verification")
+    public DefaultResponse otpVerification(@RequestBody TokenRequest body) throws Exception {
+        return new DefaultResponse("One time password verified",
+                userService.verifyOtp(body.getUsername(), body.getOtp()));
+    }
+
+    @PostMapping("/otp-resend")
+    public DefaultResponse otpResend(@RequestBody TokenRequest body) throws Exception {
+        return new DefaultResponse(userService.resendOtp(body.getUsername()), null);
     }
 
     @PostMapping("/login")

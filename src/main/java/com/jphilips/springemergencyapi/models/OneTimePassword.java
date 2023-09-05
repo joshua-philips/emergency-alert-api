@@ -27,7 +27,7 @@ public class OneTimePassword {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String token;
+    private String code;
 
     @OneToOne
     private ApplicationUser user;
@@ -37,19 +37,19 @@ public class OneTimePassword {
 
     private LocalDateTime expiryDate;
 
-    public OneTimePassword(String token) {
-        this.token = token;
+    public OneTimePassword(String code) {
+        this.code = code;
         this.expiryDate = calculateExpiryDate(EXPIRATION);
     }
 
-    public OneTimePassword(String token, ApplicationUser user) {
-        this.token = token;
+    public OneTimePassword(String code, ApplicationUser user) {
+        this.code = code;
         this.user = user;
         this.expiryDate = calculateExpiryDate(EXPIRATION);
     }
 
-    public OneTimePassword(String token, StaffUser staffUser) {
-        this.token = token;
+    public OneTimePassword(String code, StaffUser staffUser) {
+        this.code = code;
         this.staffUser = staffUser;
         this.expiryDate = calculateExpiryDate(EXPIRATION);
     }
@@ -62,13 +62,3 @@ public class OneTimePassword {
         return LocalDateTime.now().plusMinutes(expiryTimeInMinutes);
     }
 }
-
-// public static String generateOTP(int length) {
-// String numbers = "0123456789";
-// Random rndm_method = new Random();
-// char[] otp = new char[length];
-// for (int i = 0; i < length; i++) {
-// otp[i] = numbers.charAt(rndm_method.nextInt(numbers.length()));
-// }
-// return new String(otp);
-// }

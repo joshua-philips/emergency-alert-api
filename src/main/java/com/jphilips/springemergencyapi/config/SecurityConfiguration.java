@@ -23,9 +23,12 @@ public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
 
-    private String[] anyMatchers = { "/user/**",
+    private String[] anyMatchers = {
+            "/user/**",
             "/staff/login", "/staff/forgot-password", "/staff/change-password/**",
-            "/api-docs", "/swagger-ui/**", "/v3/api-docs/**", "/bus/v3/api-docs/**" };
+            "/staff/otp-verification", "/staff/otp-resend",
+            "/api-docs", "/swagger-ui/**", "/v3/api-docs/**", "/bus/v3/api-docs/**"
+    };
     private String[] staffMatchers = { "/staff/**" };
     private String[] adminMatchers = { "/staff/create-staff" };
     private String[] userMatchers = { "/alerts/add" };

@@ -38,6 +38,7 @@ public class StaffUserService {
     private final AuthenticationManager authenticationManager;
     private final PasswordResetTokenRepository resetTokenRepository;
     private final MailService mailService;
+    private final OtpService otpService;
 
     public StaffUser createUser(StaffRegisterRequest request) {
         Set<Role> roles = new HashSet<>();
@@ -68,11 +69,11 @@ public class StaffUserService {
 
         StaffUser user = staffRepository
                 .findByUsername(request.getUsername()).orElseThrow();
+        SimpleMailMessage otpMessage = mailService.sendMessage(user.getUsername(), "One time password",
+                otpService.createOtp(user));
+        System.out.println(otpMessage);
 
-        String jwtToken = jwtService.generateToken(user);
-        user.setToken(jwtToken);
         return user;
-
     }
 
     public Iterable<StaffUser> getAllStaff() {
@@ -136,5 +137,26 @@ public class StaffUserService {
 
         return user;
 
+    }
+
+    public StaffUser verifyOtp(String username, String code) throws Exception {
+        StaffUser user = otpService.verifyStaffOtp(code);
+
+        if (!user.getUsername().equalsIgnoreCase(username)) {
+            throw new Exception("Invalid code for " + username);
+        }
+
+        String token = jwtService.generateToken(user);
+        user.setToken(token);
+        return user;
+    }
+
+    public String resendOtp(String username) {
+        StaffUser user = staffRepository.findByUsername(username).get();
+        SimpleMailMessage otpMessage = mailService.sendMessage(user.getUsername(), "One time password",
+                otpService.createOtp(user));
+        System.out.println(otpMessage);
+
+        return "One Time Password sent to: " + user.getUsername();
     }
 }

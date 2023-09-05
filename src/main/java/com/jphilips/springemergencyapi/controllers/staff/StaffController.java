@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jphilips.springemergencyapi.dto.DefaultResponse;
 import com.jphilips.springemergencyapi.dto.auth.LoginRequest;
 import com.jphilips.springemergencyapi.dto.auth.StaffRegisterRequest;
+import com.jphilips.springemergencyapi.dto.auth.TokenRequest;
 import com.jphilips.springemergencyapi.dto.users.UserUpdateRequest;
 import com.jphilips.springemergencyapi.services.RolesService;
 import com.jphilips.springemergencyapi.services.user.ApplicationUserService;
@@ -30,7 +31,8 @@ public class StaffController {
 
     @PostMapping("/login")
     public DefaultResponse staffLogin(@RequestBody LoginRequest body) {
-        return new DefaultResponse("Login successful", staffService.login(body));
+        return new DefaultResponse("Login successful. One time password sent to: " + body.getUsername(),
+                staffService.login(body));
     }
 
     @PostMapping("/forgot-password")
@@ -82,4 +84,14 @@ public class StaffController {
         return new DefaultResponse("Users loaded", staffService.getAllStaff());
     }
 
+    @PostMapping("/otp-verification")
+    public DefaultResponse otpVerification(@RequestBody TokenRequest body) throws Exception {
+        return new DefaultResponse("One time password verified",
+                staffService.verifyOtp(body.getUsername(), body.getOtp()));
+    }
+
+    @PostMapping("/otp-resend")
+    public DefaultResponse otpResend(@RequestBody TokenRequest body) throws Exception {
+        return new DefaultResponse(staffService.resendOtp(body.getUsername()), null);
+    }
 }

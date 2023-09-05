@@ -33,6 +33,13 @@ public class MailService {
         return mail;
     }
 
+    public SimpleMailMessage sendMessage(String emailAddress, String subject, String body) {
+        SimpleMailMessage mail = constructEmail(subject, body, emailAddress);
+
+        // mailSender.send(mail);
+        return mail;
+    }
+
     private SimpleMailMessage constructEmail(String subject, String body,
             String emailAddress) {
         SimpleMailMessage email = new SimpleMailMessage();
