@@ -41,7 +41,7 @@ public class OtpService {
         return new String(otp);
     }
 
-    public ApplicationUser verifyApplicationOtp(String code) throws Exception {
+    public ApplicationUser verifyApplicationOtp(String code, String username) throws Exception {
         OneTimePassword otp = otpRepository.findByCode(code).get();
         ApplicationUser user = otp.getUser();
 
@@ -49,18 +49,28 @@ public class OtpService {
             throw new Exception("Expired code");
         }
 
+        if (!user.getUsername().equalsIgnoreCase(username)) {
+            throw new Exception("Invalid code for " + username);
+
+        }
+
         otp.setExpiryDate(LocalDateTime.now());
         otpRepository.delete(otp);
         return user;
     }
 
-    public StaffUser verifyStaffOtp(String code) throws Exception {
+    public StaffUser verifyStaffOtp(String code, String username) throws Exception {
 
         OneTimePassword otp = otpRepository.findByCode(code).get();
         StaffUser user = otp.getStaffUser();
 
         if (otp.getExpiryDate().isBefore(LocalDateTime.now())) {
             throw new Exception("Expired code");
+        }
+
+        if (!user.getUsername().equalsIgnoreCase(username)) {
+            throw new Exception("Invalid code for " + username);
+
         }
 
         otp.setExpiryDate(LocalDateTime.now());

@@ -143,11 +143,7 @@ public class ApplicationUserService {
     }
 
     public ApplicationUser verifyOtp(String username, String code) throws Exception {
-        ApplicationUser user = otpService.verifyApplicationOtp(code);
-
-        if (!user.getUsername().equalsIgnoreCase(username)) {
-            throw new Exception("Invalid code for " + username);
-        }
+        ApplicationUser user = otpService.verifyApplicationOtp(code, username);
 
         String token = jwtService.generateToken(user);
         user.setToken(token);

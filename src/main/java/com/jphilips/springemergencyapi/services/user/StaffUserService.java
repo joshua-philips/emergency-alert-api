@@ -140,11 +140,7 @@ public class StaffUserService {
     }
 
     public StaffUser verifyOtp(String username, String code) throws Exception {
-        StaffUser user = otpService.verifyStaffOtp(code);
-
-        if (!user.getUsername().equalsIgnoreCase(username)) {
-            throw new Exception("Invalid code for " + username);
-        }
+        StaffUser user = otpService.verifyStaffOtp(code, username);
 
         String token = jwtService.generateToken(user);
         user.setToken(token);
